@@ -1,0 +1,32 @@
+name: Validate artifacts
+
+on:
+  pull_request:
+    paths:
+      - ".github/**"
+      - "src/**"
+      - "tests/**"
+      - "scripts/**"
+      - "corpus/**"
+      - "index/**"
+      - "eval/**"
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install
+        run: pip install -e ".[dev]" pyyaml==6.0.3
+      - name: Validate customization frontmatter
+        run: python scripts/validate_artifacts.py
+      - name: Tests
+        run: pytest
+      - name: Golden eval
+        run: python .github/skills/golden-eval/scripts/compare_eval.py
