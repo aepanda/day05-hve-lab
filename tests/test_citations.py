@@ -3,6 +3,8 @@ from __future__ import annotations
 import pytest
 
 from policy_desk.citations import extract_citations, verify_citations
+from policy_desk.corpus import load_corpus
+from policy_desk.settings import CORPUS_DIR
 
 
 class TestExtractCitations:
@@ -22,10 +24,18 @@ class TestExtractCitations:
             ("Tier 1 vendors are reassessed annually [doc_id: DUE-STD].", ["DUE-STD"]),
             ("Exit plans are required [doc_id:DPA-REQ].", ["DPA-REQ"]),
             ("Bids over the threshold need three quotes [doc_id:  PRC-POL].", ["PRC-POL"]),
+            ("Offshoring notice is 90 days [doc_id: OFFS-STD].", ["OFFS-STD"]),
+            ("Tiering is in [doc_id: TIER-MTX].", ["TIER-MTX"]),
         ],
     )
     def test_extracts_well_formed_citations(self, answer, expected):
         assert extract_citations(answer) == expected
+
+    def test_every_corpus_doc_id_survives_citation_extraction(self):
+        ids = [doc.doc_id for doc in load_corpus(CORPUS_DIR)]
+        assert ids, "corpus is empty"
+        answer = " ".join(f"[doc_id: {doc_id}]" for doc_id in ids)
+        assert extract_citations(answer) == ids
 
 
 class TestVerifyCitations:
