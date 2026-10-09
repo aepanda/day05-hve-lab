@@ -1,0 +1,6 @@
+# Customization files change everyone's assistant. Review every change.
+.github/agents/ @aepanda
+.github/prompts/ @aepanda
+.github/instructions/ @aepanda
+.github/skills/ @aepanda
+.github/copilot-instructions.md @aepanda
